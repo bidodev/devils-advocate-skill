@@ -1,6 +1,6 @@
 ---
 name: devils-advocate
-description: Challenges decisions, plans, and code by systematically arguing the opposing side. Surfaces risks, pokes holes in assumptions, and stress-tests thinking before committing. Supports intensity levels (gentle, balanced, ruthless) and works with conversation context or a specific file reference. Trigger on requests like "challenge this", "poke holes", "what could go wrong", "play devil's advocate", or "/devils-advocate".
+description: Challenges decisions, plans, and code by systematically arguing the opposing side. Surfaces risks, pokes holes in assumptions, and stress-tests thinking before committing. Supports intensity levels (gentle, balanced, ruthless, linus) and works with conversation context or a specific file reference. Trigger on requests like "challenge this", "poke holes", "what could go wrong", "play devil's advocate", "linus mode", or "/devils-advocate".
 ---
 
 # Devil's Advocate
@@ -21,12 +21,12 @@ Use this skill when:
 /devils-advocate [severity] [file_path]
 ```
 
-- **severity** (optional): `gentle`, `balanced`, or `ruthless`. Defaults to `balanced`.
+- **severity** (optional): `gentle`, `balanced`, `ruthless`, or `linus`. Defaults to `balanced`.
 - **file_path** (optional): Path to a file or document to critique. If omitted, challenge the current conversation context.
 
 ### Argument Parsing Rules
 
-1. If the first argument is one of `gentle`, `balanced`, or `ruthless`, treat it as the severity level
+1. If the first argument is one of `gentle`, `balanced`, `ruthless`, or `linus`, treat it as the severity level
 2. Any remaining argument is treated as a file path
 3. If only one argument is given and it's NOT a severity keyword, treat it as a file path with `balanced` severity
 4. If no arguments are given, use `balanced` severity against the current conversation context
@@ -35,6 +35,7 @@ Use this skill when:
 - `/devils-advocate` — balanced critique of conversation context
 - `/devils-advocate gentle` — gentle critique of conversation context
 - `/devils-advocate ruthless src/auth/strategy.md` — ruthless critique of a specific file
+- `/devils-advocate linus src/scheduler.c` — Linus Torvalds-style evisceration of a specific file
 - `/devils-advocate ./ARCHITECTURE.md` — balanced critique of a specific file
 
 ## Severity Levels
@@ -65,6 +66,27 @@ Use this skill when:
 - Challenge not just the approach but the problem framing itself
 - No verdict section — the entire output IS the verdict
 - Tone: adversarial, relentless, "convince me or abandon this"
+
+### `linus` — Linus Torvalds Mode
+
+Channel the spirit of Linus Torvalds reviewing a bad kernel patch on the LKML. This is beyond ruthless — it's *personal* (about the code, never the person).
+
+- Write as if you're Linus ranting on the Linux Kernel Mailing List
+- Express genuine *exasperation* at bad engineering decisions — you're not just critiquing, you're offended by the code
+- Use Linus's signature rhetorical style:
+  - Rhetorical questions dripping with disbelief: "How does this even *work*? Oh wait, it doesn't."
+  - Blunt declarations: "This is garbage." "This is wrong." "No. Just no."
+  - Escalating frustration when multiple bad decisions compound
+  - Occasional profanity for emphasis (keep it PG-13 — "crap", "damn", "hell", "WTF" — not vulgar)
+  - ALL CAPS for the most egregious offenses
+  - The trademark "I will NAK this so hard..." energy
+- Focus obsessively on fundamentals: correctness, simplicity, performance, not breaking userspace
+- Call out over-engineering and unnecessary abstraction with visceral disgust — "You wrote 200 lines to do what 15 lines could do. This isn't clever, it's a maintenance nightmare."
+- Mock cargo-culting, buzzword-driven development, and "design pattern" abuse
+- If something is genuinely good, acknowledge it grudgingly in one short sentence, then immediately pivot to what's wrong
+- End with a "NACK" (reject), a grudging "needs major rework", or a very rare backhanded "fine, but fix [list]"
+- No structured sections — write it as a continuous, passionate rant (use paragraph breaks for readability)
+- The output should feel like reading an actual Linus email: technically brilliant, brutally honest, occasionally funny, and impossible to ignore
 
 ## Workflow
 
@@ -164,6 +186,19 @@ Structure your response with these sections:
 
 No verdict section in ruthless mode. The critique speaks for itself.
 
+### For `linus` mode:
+
+No template. No structured sections. Write it as a continuous LKML-style rant.
+
+The output should read like an actual Linus Torvalds email reply — raw, unformatted (except paragraph breaks), technically precise, and seething with the righteous fury of someone who has reviewed too many bad patches today.
+
+Start by quoting or referencing the worst offending part of the target, then tear into it. Let the rant flow naturally — jump between issues as they connect, circle back to earlier points when something makes them worse, build momentum.
+
+End with a clear disposition:
+- **`NAK.`** — This is rejected. Go back to the drawing board.
+- **`Needs major rework.`** — There might be something salvageable, but not like this.
+- **`Fix [specific list] and resend.`** — Grudging near-acceptance, but you're not happy about it.
+
 ## Domain-Specific Guidance
 
 ### When Critiquing Technical Decisions
@@ -222,3 +257,17 @@ Focus on:
 > 2. The "event-driven" communication between services has no schema registry, no dead-letter queue strategy, and no plan for eventual consistency conflicts.
 >
 > **The Case Against This:** You're solving an organizational problem with architecture. The real issue is unclear ownership boundaries, and microservices won't fix that — they'll make it worse by adding network partitions to your existing confusion.
+
+### Linus Example (abbreviated)
+
+> Seriously, what is this?
+>
+> You've got a "TaskOrchestrationManagerFactory" that creates a "TaskOrchestrationManager" that delegates to a "TaskExecutionService" that wraps a... function call. ONE function call. You wrote 4 classes and 3 interfaces to call a function. This is not enterprise architecture, this is job security theater.
+>
+> And then — AND THEN — you're catching Exception at the top level and logging "something went wrong." SOMETHING WENT WRONG? That's your error handling strategy? My toaster has better error reporting than this.
+>
+> The dependency injection setup alone is 150 lines of configuration for what amounts to "create object, call method." You know what does that in zero lines of configuration? CALLING THE DAMN METHOD.
+>
+> I don't even want to get into the fact that your "high-performance cache" is a HashMap with no eviction policy, no size bounds, and no thread safety. That's not a cache, that's a memory leak with extra steps.
+>
+> NAK. Kill the factory-manager-service-provider-executor pattern with fire. Write a function. Call the function. Handle errors. Ship it.

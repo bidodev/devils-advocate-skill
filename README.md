@@ -16,11 +16,12 @@ npx skills install bidodev/devils-advocate-skill
 
 ### Severity Levels
 
-| Level                | Behavior                                                                                                 |
-| -------------------- | -------------------------------------------------------------------------------------------------------- |
-| `gentle`             | Constructive skeptic — strengths first, then 2-3 key concerns with counter-proposals                     |
-| `balanced` (default) | Firm and thorough — challenges every major assumption, demands justification                             |
-| `ruthless`           | Relentless — assumes everything is wrong until proven right. No praise. Forces defense of every decision |
+| Level                | Behavior                                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `gentle`             | Constructive skeptic — strengths first, then 2-3 key concerns with counter-proposals                              |
+| `balanced` (default) | Firm and thorough — challenges every major assumption, demands justification                                      |
+| `ruthless`           | Relentless — assumes everything is wrong until proven right. No praise. Forces defense of every decision          |
+| `linus`              | Linus Torvalds mode — LKML-style rant. Brutally honest, technically brilliant, occasionally profane. NAK or GTFO |
 
 ### Examples
 
@@ -33,6 +34,9 @@ npx skills install bidodev/devils-advocate-skill
 
 # Ruthless critique of a specific file
 /devils-advocate ruthless src/auth/strategy.md
+
+# Linus Torvalds-style evisceration of a specific file
+/devils-advocate linus src/scheduler.c
 
 # Balanced critique of a specific file
 /devils-advocate ./ARCHITECTURE.md
@@ -50,6 +54,8 @@ The skill produces a structured critique with:
 6. **Verdict** — Overall assessment (`gentle`/`balanced` modes only)
 
 In `ruthless` mode, the verdict is replaced with **Fatal Flaws** and **The Case Against This**.
+
+In `linus` mode, all structure is thrown out — the output is a continuous, passionate LKML-style rant ending with a NAK, rework request, or grudging conditional acceptance.
 
 ## License
 
